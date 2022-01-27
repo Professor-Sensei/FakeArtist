@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AppContext } from './App.jsx';
+import ColorPicker from './ColorPicker.jsx';
 
 const Sketchpad = (props) => {
   const { get, post } = useContext(AppContext);
   const [drawOn, setDrawOn] = useState(false);
-  const [color, setColor] = useState('black');
+  const [color, setColor] = useState('white');
   const [image, setImage] = useState(props.image);
   let canvas, ctx, start, end;
 
@@ -32,6 +33,7 @@ const Sketchpad = (props) => {
   const startDraw = (e) => {
     start = [e.clientX, e.clientY];
     setDrawOn(true);
+    console.log(e);
   };
 
   const endDraw = () => {
@@ -59,24 +61,20 @@ const Sketchpad = (props) => {
 
   return (
     <>
-      <canvas
-        onMouseDown={startDraw}
-        onMouseUp={endDraw}
-        onMouseMove={draw}
-        onMouseOut={endDraw}
-        id='myCanvas'
-        width='500'
-        height='500'
-        style={{ border: '1px solid #000' }}
-      ></canvas>
+      <div id='sketchpad'>
+        <canvas
+          onMouseDown={startDraw}
+          onMouseUp={endDraw}
+          onMouseMove={draw}
+          onMouseOut={endDraw}
+          id='myCanvas'
+          width='500'
+          height='500'
+          style={{ border: '1px solid #000' }}
+        ></canvas>
+        <ColorPicker setColor={setColor} />
+      </div>
       <div>
-        <select onChange={(e) => setColor(e.target.value)}>
-          <option>Black</option>
-          <option>Blue</option>
-          <option>Red</option>
-          <option>Green</option>
-          <option>Orange</option>
-        </select>
         <button onClick={clearCanvas}>Clear</button>
         <button onClick={save}>Save</button>
         <button onClick={restore}>Restore</button>
