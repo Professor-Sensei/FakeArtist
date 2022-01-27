@@ -1,0 +1,52 @@
+{
+  "name": "fake-artist",
+  "version": "1.0.0",
+  "description": "A Fake Artist Goes to New York",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "watch": "webpack -w",
+    "start": "nodemon server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Professor-Sensei/FakeArtist.git"
+  },
+  "author": "John Razi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Professor-Sensei/FakeArtist/issues"
+  },
+  "homepage": "https://github.com/Professor-Sensei/FakeArtist#readme",
+  "devDependencies": {
+    "@babel/core": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "@babel/preset-react": "^7.16.5",
+    "@testing-library/react": "^12.1.2",
+    "@types/jest": "^27.4.0",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.5.1",
+    "eslint": "^8.5.0",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "jest": "^27.4.7",
+    "prettier": "^2.5.1",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-react",
+      "@babel/preset-env"
+    ]
+  },
+  "dependencies": {
+    "axios": "^0.25.0",
+    "express": "^4.17.2",
+    "nodemon": "^2.0.15",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "sketchpad": "^0.1.0"
+  }
+}
