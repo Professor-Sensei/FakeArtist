@@ -1,79 +1,88 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from './App.jsx';
 
-class Sketchpad extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      draw: false,
-      color: 'black',
-    };
-    this.canvas = null;
-    this.ctx = null;
-    this.start = [0, 0];
-    this.end = [0, 0];
+const Sketchpad = (props) => {
+  const { get, post } = useContext(AppContext);
+  const [drawOn, setDrawOn] = useState(false);
+  const [color, setColor] = useState('black');
+  const [image, setImage] = useState(props.image);
+  let canvas, ctx, start, end;
 
-    this.startDraw = this.startDraw.bind(this);
-    this.endDraw = this.endDraw.bind(this);
-    this.draw = this.draw.bind(this);
-    this.setColor = this.setColor.bind(this);
-    this.clearCanvas = this.clearCanvas.bind(this);
-  }
+  useEffect(() => {
+    canvas = document.getElementById('myCanvas');
+    ctx = canvas.getContext('2d');
+  });
 
-  componentDidMount() {
-    this.canvas = document.getElementById('myCanvas');
-    this.ctx = this.canvas.getContext('2d');
-  }
+  const draw = (e) => {
+    setTimeout(() => {
+      if (drawOn && start) {
+        ctx.beginPath();
+        ctx.moveTo(start[0], start[1]);
+        ctx.lineTo(e.clientX, e.clientY);
+        ctx.stroke();
+        start = end;
+        end = [e.clientX, e.clientY];
+      } else {
+        start = end;
+        end = [e.clientX, e.clientY];
+      }
+    }, 100);
+  };
 
-  draw(e) {
-    if (this.state.draw) {
-      this.ctx.beginPath();
-      this.ctx.moveTo(this.start[0], this.start[1]);
-      this.ctx.lineTo(e.clientX, e.clientY);
-      this.ctx.stroke();
+  const startDraw = (e) => {
+    start = [e.clientX, e.clientY];
+    setDrawOn(true);
+  };
+
+  const endDraw = () => {
+    if (drawOn) {
+      setDrawOn(false);
+      // post(ctx.getImageData(0, 0, canvas.width, canvas.height));
     }
-    this.start = this.end;
-    this.end = [e.clientX, e.clientY];
-  }
+  };
 
-  startDraw() {
-    this.setState({ draw: true });
-  }
+  useEffect(() => {
+    ctx.strokeStyle = color;
+  }, [color]);
 
-  endDraw() {
-    this.setState({ draw: false });
-  }
+  const clearCanvas = () => {
+    ctx.clearRect(0, 0, 500, 500);
+  };
 
-  setColor(e) {
-    this.ctx.strokeStyle = e.target.value;
-  }
+  const save = () => {
+    setImage(ctx.getImageData(0, 0, canvas.width, canvas.height));
+  };
 
-  clearCanvas() {
-    this.ctx.clearRect(0, 0, 500, 500);
-  }
+  const restore = () => {
+    ctx.putImageData(image, 0, 0);
+  };
 
-  render() {
-    return (
-      <>
-        <canvas
-          onMouseDown={this.startDraw}
-          onMouseUp={this.endDraw}
-          onMouseMove={this.draw}
-          id='myCanvas'
-          width='500'
-          height='500'
-          style={{ border: '1px solid #000' }}
-        ></canvas>
-        <select onChange={this.setColor}>
+  return (
+    <>
+      <canvas
+        onMouseDown={startDraw}
+        onMouseUp={endDraw}
+        onMouseMove={draw}
+        onMouseOut={endDraw}
+        id='myCanvas'
+        width='500'
+        height='500'
+        style={{ border: '1px solid #000' }}
+      ></canvas>
+      <div>
+        <select onChange={(e) => setColor(e.target.value)}>
           <option>Black</option>
           <option>Blue</option>
           <option>Red</option>
           <option>Green</option>
           <option>Orange</option>
         </select>
-        <button onClick={this.clearCanvas}>Clear</button>
-      </>
-    );
-  }
-}
+        <button onClick={clearCanvas}>Clear</button>
+        <button onClick={save}>Save</button>
+        <button onClick={restore}>Restore</button>
+      </div>
+    </>
+  );
+};
 
 export default Sketchpad;
