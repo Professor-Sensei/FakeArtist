@@ -4,24 +4,35 @@ class Sketchpad extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      start: [0, 0],
-      end: [0, 0],
       draw: false,
+      color: 'black',
     };
+    this.canvas = null;
+    this.ctx = null;
+    this.start = [0, 0];
+    this.end = [0, 0];
+
     this.startDraw = this.startDraw.bind(this);
     this.endDraw = this.endDraw.bind(this);
     this.draw = this.draw.bind(this);
+    this.setColor = this.setColor.bind(this);
+    this.clearCanvas = this.clearCanvas.bind(this);
+  }
+
+  componentDidMount() {
+    this.canvas = document.getElementById('myCanvas');
+    this.ctx = this.canvas.getContext('2d');
   }
 
   draw(e) {
-    let c = document.getElementById('myCanvas');
-    let ctx = c.getContext('2d');
     if (this.state.draw) {
-      ctx.moveTo(this.state.start[0], this.state.start[1]);
-      ctx.lineTo(e.clientX, e.clientY);
-      ctx.stroke();
+      this.ctx.beginPath();
+      this.ctx.moveTo(this.start[0], this.start[1]);
+      this.ctx.lineTo(e.clientX, e.clientY);
+      this.ctx.stroke();
     }
-    this.setState({ start: this.state.end, end: [e.clientX, e.clientY] });
+    this.start = this.end;
+    this.end = [e.clientX, e.clientY];
   }
 
   startDraw() {
@@ -32,11 +43,19 @@ class Sketchpad extends React.Component {
     this.setState({ draw: false });
   }
 
+  setColor(e) {
+    this.ctx.strokeStyle = e.target.value;
+  }
+
+  clearCanvas() {
+    this.ctx.clearRect(0, 0, 500, 500);
+  }
+
   render() {
     return (
       <>
         <canvas
-          onMouseDown={(e) => this.startDraw(e)}
+          onMouseDown={this.startDraw}
           onMouseUp={this.endDraw}
           onMouseMove={this.draw}
           id='myCanvas'
@@ -44,6 +63,14 @@ class Sketchpad extends React.Component {
           height='500'
           style={{ border: '1px solid #000' }}
         ></canvas>
+        <select onChange={this.setColor}>
+          <option>Black</option>
+          <option>Blue</option>
+          <option>Red</option>
+          <option>Green</option>
+          <option>Orange</option>
+        </select>
+        <button onClick={this.clearCanvas}>Clear</button>
       </>
     );
   }
